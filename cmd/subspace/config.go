@@ -443,7 +443,7 @@ func (c *Config) GenerateTOTP() error {
 	key, err := totp.Generate(
 		totp.GenerateOpts{
 			Issuer:      httpHost,
-			AccountName: config.Info.Email,
+			AccountName: c.Info.Email,
 		},
 	)
 	if err != nil {
