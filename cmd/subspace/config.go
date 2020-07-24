@@ -102,6 +102,7 @@ func NewConfig(filename string) (*Config, error) {
 	// Create new config with defaults
 	if os.IsNotExist(err) {
 		c.Info = &Info{
+			Email: "null",
 			HashKey:  RandomString(32),
 			BlockKey: RandomString(32),
 		}
