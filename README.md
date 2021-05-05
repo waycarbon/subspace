@@ -153,7 +153,9 @@ Follow the official Docker install instructions: [Get Docker CE for Ubuntu](http
 
 Make sure to change the `--env SUBSPACE_HTTP_HOST` to your publicly accessible domain name.
 
-If you want to run the vpn on a different domain as the http host you can set `--env SUBSPACE_ENDPOINT_HOST`
+If you want to run the vpn on a different domain as the http host you can set `--env SUBSPACE_ENDPOINT_HOST`.
+
+Use `--env SUBSPACE_DISABLE_DNS=1` to make subspace generate wireguard configs without the `DNS` option, preserving the user's DNS servers.
 
 ```bash
 
