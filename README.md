@@ -153,6 +153,8 @@ Follow the official Docker install instructions: [Get Docker CE for Ubuntu](http
 
 Make sure to change the `--env SUBSPACE_HTTP_HOST` to your publicly accessible domain name.
 
+Use `--env SUBSPACE_DISABLE_DNS=1` to make subspace generate wireguard configs without the `DNS` option, preserving the user's DNS servers.
+
 ```bash
 
 # Your data directory should be bind-mounted as `/data` inside the container using the `--volume` flag.
