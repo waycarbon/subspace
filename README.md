@@ -97,7 +97,7 @@ $ subspace --http-host subspace.example.com
 |      flag       | default | description                                                                                                               |
 | :-------------: | :-----: | :------------------------------------------------------------------------------------------------------------------------ |
 |   `http-host`   |         | REQUIRED: The host to listen on and set cookies for                                                                       |
-|   `backlink`    |   `/`   | OPTIONAL: The page to set the home button too                                                                             |
+|   `backlink`    |   `/`   | OPTIONAL: The page to set the home button to                                                                              |
 |    `datadir`    | `/data` | OPTIONAL: The directory to store data such as the wireguard configuration files                                           |
 |     `debug`     |         | OPTIONAL: Place subspace into debug mode for verbose log output                                                           |
 |   `http-addr`   |  `:80`  | OPTIONAL: HTTP listen address                                                                                             |
@@ -152,6 +152,8 @@ sysctl -w net.ipv6.conf.all.forwarding=1
 Follow the official Docker install instructions: [Get Docker CE for Ubuntu](https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/)
 
 Make sure to change the `--env SUBSPACE_HTTP_HOST` to your publicly accessible domain name.
+
+If you want to run the vpn on a different domain as the http host you can set `--env SUBSPACE_ENDPOINT_HOST`.
 
 Use `--env SUBSPACE_DISABLE_DNS=1` to make subspace generate wireguard configs without the `DNS` option, preserving the user's DNS servers.
 
