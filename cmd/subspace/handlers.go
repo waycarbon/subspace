@@ -424,7 +424,7 @@ func profileAddHandler(w *Web) {
 		ipv6Gw = gw
 	}
 	disableDNS := ""
-	if gw := getEnv("SUBSPACE_DISABLE_DNS", "nil"); gw == "true" {
+	if shouldDisableDNS := getEnv("SUBSPACE_DISABLE_DNS", "nil"); shouldDisableDNS == "true" {
 		disableDNS = "# "
 	}
 	ipv6Cidr := "64"
