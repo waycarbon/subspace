@@ -18,10 +18,10 @@ import (
 )
 
 var (
-	validEmail         = regexp.MustCompile(`^[ -~]+@[ -~]+$`)
-	validPassword      = regexp.MustCompile(`^[ -~]{6,200}$`)
-	validString        = regexp.MustCompile(`^[ -~]{1,200}$`)
-	maxProfiles        = 250
+	validEmail    = regexp.MustCompile(`^[ -~]+@[ -~]+$`)
+	validPassword = regexp.MustCompile(`^[ -~]{6,200}$`)
+	validString   = regexp.MustCompile(`^[ -~]{1,200}$`)
+	maxProfiles   = 250
 )
 
 func getEnv(key, fallback string) string {
@@ -423,6 +423,10 @@ func profileAddHandler(w *Web) {
 	if gw := getEnv("SUBSPACE_IPV6_GW", "nil"); gw != "nil" {
 		ipv6Gw = gw
 	}
+	disableDNS := ""
+	if gw := getEnv("SUBSPACE_DISABLE_DNS", "nil"); gw == "true" {
+		disableDNS = "# "
+	}
 	ipv6Cidr := "64"
 	if cidr := getEnv("SUBSPACE_IPV6_CIDR", "nil"); cidr != "nil" {
 		ipv6Cidr = cidr
@@ -456,7 +460,7 @@ WGPEER
 cat <<WGCLIENT >clients/{{$.Profile.ID}}.conf
 [Interface]
 PrivateKey = ${wg_private_key}
-DNS = {{$.IPv4Gw}}, {{$.IPv6Gw}}
+{{$.DisableDNS}}DNS = {{$.IPv4Gw}}, {{$.IPv6Gw}}
 Address = {{$.IPv4Pref}}{{$.Profile.Number}}/{{$.IPv4Cidr}},{{$.IPv6Pref}}{{$.Profile.Number}}/{{$.IPv6Cidr}}
 
 [Peer]
@@ -476,6 +480,7 @@ WGCLIENT
 		IPv6Pref     string
 		IPv4Cidr     string
 		IPv6Cidr     string
+		DisableDNS   string
 		Listenport   string
 		AllowedIPS   string
 	}{
@@ -488,6 +493,7 @@ WGCLIENT
 		ipv6Pref,
 		ipv4Cidr,
 		ipv6Cidr,
+		disableDNS,
 		listenport,
 		allowedips,
 	})
