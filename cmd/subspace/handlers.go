@@ -37,10 +37,12 @@ func ssoHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 	if err == samlsp.ErrNoSession {
+		logger.Debugf("SSO: HandleStartAuthFlow")
 		samlSP.HandleStartAuthFlow(w, r)
 		return
 	}
 
+	logger.Debugf("SSO: unable to get session")
 	samlSP.OnError(w, r, err)
 	return
 }
@@ -53,7 +55,6 @@ func samlHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 	logger.Debugf("SSO: samlSP.ServeHTTP")
-	logger.Debugf("r: %+v", r)
 	samlSP.ServeHTTP(w, r)
 }
 
