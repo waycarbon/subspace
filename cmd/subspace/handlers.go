@@ -29,18 +29,10 @@ func getEnv(key, fallback string) string {
 	return fallback
 }
 
+// Handles the sign in part separately from the SAML
 func ssoHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	// if session := samlsp.SessionFromContext(r.Context()); session != nil {
-	// 	http.Redirect(w, r, "/", http.StatusFound)
-	// 	return
-	// }
-
-	// logger.Debugf("SSO: require account handler")
-	// samlSP.HandleStartAuthFlow(w, r)
 	session, err := samlSP.Session.GetSession(r)
 	if session != nil {
-		// r = r.WithContext(samlsp.ContextWithSession(r.Context(), session))
-		// samlSP.ServeHTTP(w, r)
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
@@ -53,6 +45,7 @@ func ssoHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	return
 }
 
+// Handles the SAML part separately from sign in
 func samlHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	if samlSP == nil {
 		logger.Warnf("SAML is not configured")
