@@ -193,19 +193,14 @@ func WebHandler(h func(*Web), section string) httprouter.Handle {
 			session, _ := samlSP.Session.GetSession(r)
 			if session != nil {
 				r = r.WithContext(samlsp.ContextWithSession(r.Context(), session))
+				jwtSessionClaims, ok := session.(samlsp.JWTSessionClaims)
 
-				s := samlsp.SessionFromContext(r.Context())
-				if s == nil {
-					return
-				}
-				sa, ok := s.(samlsp.SessionWithAttributes)
 				if !ok {
+					Error(w, fmt.Errorf("Unable to decode session into JWTSessionClaims"))
 					return
 				}
 
-				logger.Debugf("Token contents: %+v!", sa.GetAttributes())
-
-				email := samlsp.AttributeFromContext(r.Context(), "cn")
+				email := jwtSessionClaims.Subject
 				if email == "" {
 					Error(w, fmt.Errorf("SAML token missing email"))
 					return

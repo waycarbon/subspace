@@ -60,6 +60,7 @@ func samlHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 	logger.Debugf("SSO: samlSP.ServeHTTP")
+	logger.Debugf("r: %+v", r)
 	samlSP.ServeHTTP(w, r)
 }
 
