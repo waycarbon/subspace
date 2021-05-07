@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/crewjam/saml/samlsp"
 	"github.com/julienschmidt/httprouter"
 	"golang.org/x/crypto/bcrypt"
 
@@ -15,10 +16,10 @@ import (
 )
 
 var (
-	validEmail         = regexp.MustCompile(`^[ -~]+@[ -~]+$`)
-	validPassword      = regexp.MustCompile(`^[ -~]{6,200}$`)
-	validString        = regexp.MustCompile(`^[ -~]{1,200}$`)
-	maxProfiles        = 250
+	validEmail    = regexp.MustCompile(`^[ -~]+@[ -~]+$`)
+	validPassword = regexp.MustCompile(`^[ -~]{6,200}$`)
+	validString   = regexp.MustCompile(`^[ -~]{1,200}$`)
+	maxProfiles   = 250
 )
 
 func getEnv(key, fallback string) string {
@@ -29,12 +30,27 @@ func getEnv(key, fallback string) string {
 }
 
 func ssoHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	if token := samlSP.GetAuthorizationToken(r); token != nil {
+	// if session := samlsp.SessionFromContext(r.Context()); session != nil {
+	// 	http.Redirect(w, r, "/", http.StatusFound)
+	// 	return
+	// }
+
+	// logger.Debugf("SSO: require account handler")
+	// samlSP.HandleStartAuthFlow(w, r)
+	session, err := samlSP.Session.GetSession(r)
+	if session != nil {
+		// r = r.WithContext(samlsp.ContextWithSession(r.Context(), session))
+		// samlSP.ServeHTTP(w, r)
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
-	logger.Debugf("SSO: require account handler")
-	samlSP.RequireAccountHandler(w, r)
+	if err == samlsp.ErrNoSession {
+		samlSP.HandleStartAuthFlow(w, r)
+		return
+	}
+
+	samlSP.OnError(w, r, err)
+	return
 }
 
 func samlHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {

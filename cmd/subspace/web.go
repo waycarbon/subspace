@@ -190,10 +190,22 @@ func WebHandler(h func(*Web), section string) httprouter.Handle {
 
 		// Needs a new session.
 		if samlSP != nil {
-			if token := samlSP.GetAuthorizationToken(r); token != nil {
-				r = r.WithContext(samlsp.WithToken(r.Context(), token))
+			session, _ := samlSP.Session.GetSession(r)
+			if session != nil {
+				r = r.WithContext(samlsp.ContextWithSession(r.Context(), session))
 
-				email := token.StandardClaims.Subject
+				s := samlsp.SessionFromContext(r.Context())
+				if s == nil {
+					return
+				}
+				sa, ok := s.(samlsp.SessionWithAttributes)
+				if !ok {
+					return
+				}
+
+				logger.Debugf("Token contents: %+v!", sa.GetAttributes())
+
+				email := samlsp.AttributeFromContext(r.Context(), "cn")
 				if email == "" {
 					Error(w, fmt.Errorf("SAML token missing email"))
 					return
