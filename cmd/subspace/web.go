@@ -192,8 +192,8 @@ func WebHandler(h func(*Web), section string) httprouter.Handle {
 		if samlSP != nil {
 			session, err := samlSP.Session.GetSession(r)
 
-			if err != nil {
-				logger.Errorf("SAML: Unable to get session from requests: %+v", err)
+			if err != nil && err != samlsp.ErrNoSession {
+				logger.Debugf("SAML: Unable to get session from requests: %+v", err)
 			}
 
 			if session != nil {
