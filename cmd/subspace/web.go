@@ -193,7 +193,12 @@ func WebHandler(h func(*Web), section string) httprouter.Handle {
 
 		// Needs a new session.
 		if samlSP != nil {
-			session, _ := samlSP.Session.GetSession(r)
+			session, err := samlSP.Session.GetSession(r)
+
+			if err != nil {
+				logger.Debugf("SAML: Unable to get session from requests: %+v", err)
+			}
+
 			if session != nil {
 				r = r.WithContext(samlsp.ContextWithSession(r.Context(), session))
 				jwtSessionClaims, ok := session.(samlsp.JWTSessionClaims)
