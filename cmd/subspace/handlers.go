@@ -434,10 +434,6 @@ func profileAddHandler(w *Web) {
 	if gw := getEnv("SUBSPACE_IPV6_GW", "nil"); gw != "nil" {
 		ipv6Gw = gw
 	}
-	disableDNS := ""
-	if shouldDisableDNS := getEnv("SUBSPACE_DISABLE_DNS", "nil"); shouldDisableDNS != "nil" {
-		disableDNS = "# "
-	}
 	ipv6Cidr := "64"
 	if cidr := getEnv("SUBSPACE_IPV6_CIDR", "nil"); cidr != "nil" {
 		ipv6Cidr = cidr
@@ -505,7 +501,6 @@ WGCLIENT
 		IPv6Pref     string
 		IPv4Cidr     string
 		IPv6Cidr     string
-		DisableDNS   string
 		Listenport   string
 		AllowedIPS   string
 		Ipv4Enabled  bool
@@ -521,7 +516,6 @@ WGCLIENT
 		ipv6Pref,
 		ipv4Cidr,
 		ipv6Cidr,
-		disableDNS,
 		listenport,
 		allowedips,
 		ipv4Enabled,
